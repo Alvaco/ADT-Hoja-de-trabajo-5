@@ -13,26 +13,26 @@ def proceso(env, nombre, CPU, memoriaRAM, inputOutput, memoria, instrucciones):
     
     #Crea un nuevo proceso
     creacion = env.now #Presenta el momeno en el cual se crea un nuevo proceso
-    print('%s se creo a las %s unidades de tiempo' % (nombre, creacion))
+    print('%s este se creo a las %s unidades de tiempo' % (nombre, creacion))
     with memoriaRAM.get(memoria) as req:
         yield req
         ready=env.now
-        print('%s paso a ready en %s' % (nombre,ready))
+        print('%s cambio a estado ready en %s' % (nombre,ready))
         
         while(instrucciones>0):
             with CPU.request() as req1:
                 yield req1
                 procesando=env.now
-                print ('empezando a procesar %s en %s' % (nombre, procesando))
+                print ('Comenzo a procesar %s en %s' % (nombre, procesando))
                 yield env.timeout(tiempoDelProceso)
                 procesando=env.now
-                print ('termino de procesar %s en %s' % (nombre, procesando))
+                print ('Finalizo de procesar %s en %s' % (nombre, procesando))
 
                 if (instrucciones-3)<0:
                     terminated = env.now
                     tiempoProceso = terminated - creacion
                     tiempoTotal = tiempoTotal + tiempoProceso
-                    print('%s termino en %s' % (nombre, terminated))
+                    print('%s finalizo en %s' % (nombre, terminated))
                     memoriaRAM.put(memoria)
                     instrucciones = 0
                 else:
@@ -40,10 +40,10 @@ def proceso(env, nombre, CPU, memoriaRAM, inputOutput, memoria, instrucciones):
                     if random.randint(0,1) == 0:
                         with inputOutput.request() as req2:
                             yield req2
-                            print(' %s empezo proceso I/O en %s' % (nombre, env.now))
+                            print(' %s comenzo el proceso Input/Output en %s' % (nombre, env.now))
                             tib = random.randint(1, tiempoInicio)
                             yield env.timeout(tib)
-                            print(' %s termino proceso I/O en %s' % (nombre, env.now))
+                            print(' %s finalizo el proceso Input/Output en %s' % (nombre, env.now))
                     
 def source(env, numero, intervalo, CPU, inputOutput, memoriaRAM):
     global InstruccionesMax
