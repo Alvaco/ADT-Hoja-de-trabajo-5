@@ -5,6 +5,7 @@
 import simpy
 import random
 import math
+import pylab
 
 def proceso(env, nombre, CPU, memoriaRAM, inputOutput, memoria, instrucciones):
     global tiempoDelProceso
@@ -33,6 +34,7 @@ def proceso(env, nombre, CPU, memoriaRAM, inputOutput, memoria, instrucciones):
                     tiempoProceso = terminated - creacion
                     tiempoTotal = tiempoTotal + tiempoProceso
                     print('%s finalizo en %s' % (nombre, terminated))
+                    tiempoProcesos.append(tiempoProceso)
                     memoriaRAM.put(memoria)
                     instrucciones = 0
                 else:
@@ -57,6 +59,7 @@ def source(env, numero, intervalo, CPU, inputOutput, memoriaRAM):
 semilla = 42
 procesos = 25
 intervalo = 5.0
+tiempoProcesos = []
 global tiempoDelProceso #Tiempo utilizado en el CPU para cada proceso
 tiempoDelProceso = 2
 
@@ -83,9 +86,10 @@ env.process(source(env, procesos, intervalo, CPU, inputOutput, memoriaRAM))
 env.run()
 
 promedio = tiempoTotal/procesos
+desvEst = pylab.std(tiempoProcesos)
 
 
 print('\n\n')
 print('El CPU se tardó %s en unidades de tiempo en realizar la cola de todos los procesos' % (tiempoTotal))
-print ('El promedio de tiempo tomado operacion fue de: %s en unidades de tiempo' % (promedio))
+print ('El promedio de tiempo tomado operacion fue de: %s en unidades de tiempo, con una deviacion estandar de %d' % (promedio, desvEst))
 print('\n\n')
